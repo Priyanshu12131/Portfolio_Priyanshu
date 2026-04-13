@@ -1,0 +1,242 @@
+.skills {
+  background: var(--bg-primary);
+  padding: 6rem 2rem;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.sectionTitle {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.underline {
+  width: 100px;
+  height: 4px;
+  background: var(--accent-gradient);
+  margin: 0 auto 3rem;
+  border-radius: 2px;
+}
+
+/* ── Tab Navigation ── */
+.tabsRow {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 2.5rem;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1.6rem;
+  border-radius: 50px;
+  border: 2px solid var(--border-color);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.25s, background 0.25s, color 0.25s, box-shadow 0.25s;
+}
+
+.tab:hover {
+  border-color: var(--tab-color);
+  color: var(--tab-color);
+}
+
+.tabActive {
+  background: var(--tab-color);
+  border-color: var(--tab-color);
+  color: #fff;
+  box-shadow: 0 4px 20px color-mix(in srgb, var(--tab-color) 40%, transparent);
+}
+
+.tabIcon {
+  font-size: 1.2rem;
+}
+
+.tabLabel {
+  letter-spacing: 0.01em;
+}
+
+/* ── Category Content ── */
+.categoryContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+/* ── Sub-category ── */
+.subCategory {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 2rem 2.5rem;
+  box-shadow: var(--shadow);
+}
+
+.subCategoryTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--border-color);
+  letter-spacing: 0.02em;
+}
+
+/* ── Sub-group ── */
+.subGroup {
+  margin-bottom: 2rem;
+}
+
+.subGroup:last-child {
+  margin-bottom: 0;
+}
+
+.subGroupTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-secondary, #9ca3af);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.subGroupTitle::before {
+  content: '';
+  display: inline-block;
+  width: 18px;
+  height: 2px;
+  background: var(--accent-gradient);
+  border-radius: 1px;
+}
+
+/* ── Skills Grid ── */
+.skillsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 2rem;
+  justify-items: center;
+}
+
+/* ── Skill Card ── */
+.skillCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: default;
+}
+
+/* ── Circular Progress ── */
+.circularProgress {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.progressSvg {
+  width: 120px;
+  height: 120px;
+}
+
+.percentageText {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.percentage {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--accent-primary);
+}
+
+.skillName {
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .skills {
+    padding: 4rem 1rem;
+  }
+
+  .sectionTitle {
+    font-size: 2rem;
+  }
+
+  .tabsRow {
+    gap: 0.6rem;
+  }
+
+  .tab {
+    padding: 0.6rem 1.1rem;
+    font-size: 0.9rem;
+  }
+
+  .subCategory {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .skillsGrid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .circularProgress,
+  .progressSvg {
+    width: 95px;
+    height: 95px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tabsRow {
+    gap: 0.5rem;
+  }
+
+  .tab {
+    padding: 0.55rem 0.9rem;
+    font-size: 0.82rem;
+  }
+
+  .tabIcon {
+    font-size: 1rem;
+  }
+
+  .skillsGrid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+
+  .circularProgress,
+  .progressSvg {
+    width: 85px;
+    height: 85px;
+  }
+}

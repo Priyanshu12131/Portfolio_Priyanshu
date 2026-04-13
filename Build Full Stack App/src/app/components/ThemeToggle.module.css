@@ -1,0 +1,31 @@
+.themeToggle {
+  position: fixed;
+  top: 5rem;
+  right: 2rem;
+  z-index: 1000;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--accent-gradient);
+  border: none;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-lg);
+  transition: transform 0.3s ease;
+}
+
+.themeToggle:hover {
+  transform: scale(1.1) rotate(15deg);
+}
+
+@media (max-width: 768px) {
+  .themeToggle {
+    top: 4rem;
+    right: 1rem;
+    width: 45px;
+    height: 45px;
+  }
+}

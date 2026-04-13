@@ -1,0 +1,215 @@
+.hero {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-primary);
+  padding: 8rem 2rem 4rem;
+}
+
+.heroContent {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  max-width: 1200px;
+  width: 100%;
+  z-index: 1;
+}
+
+.textContent {
+  text-align: left;
+}
+
+.greeting {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.name {
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.roleContainer {
+  min-height: 4rem;
+  margin-bottom: 1.5rem;
+}
+
+.role {
+  font-size: 2.2rem;
+  color: var(--accent-primary);
+  display: inline-block;
+}
+
+.cursor {
+  animation: blink 1s infinite;
+  margin-left: 2px;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.tagline {
+  font-size: 1.15rem;
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+  line-height: 1.7;
+}
+
+.ctaButtons {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* Dropdown wrapper */
+.dropdownWrapper {
+  position: relative;
+}
+
+.primaryBtn {
+  padding: 0.9rem 1.5rem;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
+  font-family: inherit;
+  background: var(--accent-gradient);
+  color: white;
+  box-shadow: var(--shadow);
+  white-space: nowrap;
+}
+
+.primaryBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  z-index: 100;
+  min-width: 200px;
+}
+
+.dropdownItem {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1.25rem;
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s ease;
+  font-family: inherit;
+}
+
+.dropdownItem:hover {
+  background: var(--accent-glow);
+  color: var(--accent-primary);
+}
+
+/* Contact button */
+.contactBtn {
+  padding: 0.9rem 1.5rem;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
+  font-family: inherit;
+  background: var(--contact-gradient);
+  color: white;
+  box-shadow: 0 4px 15px var(--contact-shadow);
+}
+
+.contactBtn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+  box-shadow: 0 8px 25px var(--contact-shadow);
+}
+
+/* ✅ Avatar container — matches page background so no white/grey box shows */
+.avatarContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ✅ This removes any white square/box under the avatar circle */
+.avatarContainer > div,
+.avatarContainer img {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.scrollDownBtn {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: none;
+  border: none;
+  color: var(--accent-primary);
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: background 0.3s ease;
+}
+
+.scrollDownBtn:hover {
+  background: var(--bg-secondary);
+}
+
+@media (max-width: 968px) {
+  .heroContent {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    text-align: center;
+  }
+  .textContent { text-align: center; }
+  .greeting { font-size: 2.5rem; }
+  .role { font-size: 1.8rem; }
+  .ctaButtons { justify-content: center; }
+  .dropdown { left: 50%; transform: translateX(-50%); }
+}
+
+@media (max-width: 640px) {
+  .hero { padding: 6rem 1rem 3rem; }
+  .greeting { font-size: 2rem; }
+  .role { font-size: 1.5rem; }
+  .tagline { font-size: 1rem; }
+  .ctaButtons { flex-direction: column; align-items: center; }
+  .primaryBtn, .contactBtn { width: 100%; justify-content: center; }
+  .dropdown { left: 0; transform: none; }
+}
