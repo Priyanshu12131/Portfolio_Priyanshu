@@ -27,7 +27,7 @@ function Contact() {
     setStatus('sending');
 
     // ✅ Uses VITE_API_URL from .env — works both locally and on Vercel
-    const API_URL = import.meta.env.VITE_API_URL || 'https://portfolio-priyanshu-y5cg.vercel.app/';
+  const API_URL = import.meta.env.VITE_API_URL || 'https://portfolio-priyanshu-vv6p.vercel.app';
 
     try {
       const response = await fetch(`${API_URL}/api/contact`, {
