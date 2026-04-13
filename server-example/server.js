@@ -39,7 +39,7 @@ app.use('/api/', limiter);
 // ─── CORS ─────────────────────────────────────────────────────────────────────
 const allowedOrigins = process.env.CORS_ORIGIN
   ? process.env.CORS_ORIGIN.split(',').map(o => o.trim())
-  : ['https://portfolio-priyanshu-wheat.vercel.app/'];
+  : ['https://portfolio-priyanshu-tpw5.vercel.app/'];
 
 app.use(
   cors({
