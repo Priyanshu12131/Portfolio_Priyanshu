@@ -191,9 +191,17 @@ const transporter = nodemailer.createTransport({
   auth: { user: process.env.GMAIL_USER, pass: process.env.GMAIL_PASS },
 });
 
+transporter.verify((error, success) => {
+  if (error) {
+    console.error('❌ Email transporter error:', error.message);
+  } else {
+    console.log('✅ Email transporter ready');
+  }
+});
+
 // ─── Health Check ─────────────────────────────────────────────────────────────
 app.get('/', (req, res) => {
-  res.json({ status: 'OK', message: '🚀 Backend is running!', dbConnected: isMongoConnected });
+  res.json({ status: 'OK', message: ' Backend is running!', dbConnected: isMongoConnected });
 });
 
 app.get('/api/health', (req, res) => {
@@ -231,7 +239,8 @@ app.post('/api/contact', async (req, res) => {
     await newContact.save();
     console.log('✅ Contact saved to MongoDB:', newContact._id);
 
-    await transporter.sendMail({
+    // ✅ Send email separately — don't let it block the success response
+    transporter.sendMail({
       from: `"Portfolio Contact" <${process.env.GMAIL_USER}>`,
       to: process.env.GMAIL_USER,
       replyTo: email,
@@ -251,8 +260,13 @@ app.post('/api/contact', async (req, res) => {
           <p style="color: #aaa; font-size: 12px;">Reply directly to respond to ${name}.</p>
         </div>
       `,
+    }).then(() => {
+      console.log('✅ Email sent successfully');
+    }).catch((emailErr) => {
+      console.error('⚠️ Email failed (message still saved):', emailErr.message);
     });
-    console.log('✅ Email sent successfully');
+
+    // Respond immediately after DB save — don't await email
     res.status(200).json({ success: true, message: 'Message sent successfully!' });
   } catch (error) {
     console.error('❌ Contact route error:', error);
@@ -355,7 +369,7 @@ const PORT = process.env.PORT || 7000;
 const server = app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
 server.on('error', (err) => {
   if (err.code === 'EADDRINUSE') {
-    console.error(`❌ Port ${PORT} is in use.`);
+    console.error(`Port ${PORT} is in use.`);
   }
 });
 
