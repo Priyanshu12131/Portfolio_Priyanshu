@@ -256,7 +256,8 @@ app.post('/api/contact', async (req, res) => {
     res.status(200).json({ success: true, message: 'Message sent successfully!' });
   } catch (error) {
     console.error('❌ Contact route error:', error);
-    res.status(500).json({ error: 'Failed to send message. Please try again.' });
+    // Returning the real error message temporarily so we can find the cause
+    res.status(500).json({ error: `Server Error: ${error.message}` });
   }
 });
 
