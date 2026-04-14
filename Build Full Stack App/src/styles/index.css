@@ -1,8 +1,13 @@
-@import './fonts.css';
-@import './tailwind.css';
+/* ===== INDEX.CSS ===== */
+/* ✅ CORRECT IMPORT ORDER:
+   1. theme.css first  — defines @custom-variant and @theme for Tailwind v4
+   2. tailwind.css     — processes Tailwind with the theme in scope
+   3. fonts.css last   — applies font variables after everything else */
 @import './theme.css';
+@import './tailwind.css';
+@import './fonts.css';
 
-/* Portfolio Global Styles */
+/* ── Reset & Box Model ── */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -16,8 +21,9 @@ html, body, #root {
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  /* ✅ FIXED: Use var(--font-sans) from fonts.css instead of a hardcoded stack
+     that was overriding the Inter/Poppins fonts you imported */
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
@@ -36,10 +42,11 @@ body {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+  font-family: var(--font-mono);
 }
 
-/* ===== THEME COLORS ===== */
+/* ===== PORTFOLIO THEME COLORS ===== */
+/* These are your custom portfolio variables — separate from Tailwind's theme vars */
 
 :root[data-theme="light"] {
   --bg-primary: #f0f4ff;

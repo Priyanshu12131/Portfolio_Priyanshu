@@ -1,3 +1,5 @@
+/* ===== THEME.CSS ===== */
+/* ✅ @custom-variant is Tailwind v4 syntax — correct for this project */
 @custom-variant dark (&:is(.dark *));
 
 :root {
@@ -128,53 +130,50 @@
     @apply bg-background text-foreground;
   }
 
-  /**
-  * Default typography styles for HTML elements (h1-h4, p, label, button, input).
-  * These are in @layer base, so Tailwind utility classes (like text-sm, text-lg) automatically override them.
-  */
-
   html {
     font-size: var(--font-size);
   }
 
+  /* ✅ FIXED: --text-2xl etc. are Tailwind v4 internal tokens, NOT standalone CSS vars.
+     Replaced with explicit rem values that always work. */
   h1 {
-    font-size: var(--text-2xl);
+    font-size: 1.5rem;   /* equivalent to text-2xl */
     font-weight: var(--font-weight-medium);
     line-height: 1.5;
   }
 
   h2 {
-    font-size: var(--text-xl);
+    font-size: 1.25rem;  /* equivalent to text-xl */
     font-weight: var(--font-weight-medium);
     line-height: 1.5;
   }
 
   h3 {
-    font-size: var(--text-lg);
+    font-size: 1.125rem; /* equivalent to text-lg */
     font-weight: var(--font-weight-medium);
     line-height: 1.5;
   }
 
   h4 {
-    font-size: var(--text-base);
+    font-size: 1rem;     /* equivalent to text-base */
     font-weight: var(--font-weight-medium);
     line-height: 1.5;
   }
 
   label {
-    font-size: var(--text-base);
+    font-size: 1rem;
     font-weight: var(--font-weight-medium);
     line-height: 1.5;
   }
 
   button {
-    font-size: var(--text-base);
+    font-size: 1rem;
     font-weight: var(--font-weight-medium);
     line-height: 1.5;
   }
 
   input {
-    font-size: var(--text-base);
+    font-size: 1rem;
     font-weight: var(--font-weight-normal);
     line-height: 1.5;
   }

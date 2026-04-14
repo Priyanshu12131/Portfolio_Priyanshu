@@ -7,6 +7,7 @@ function Contact() {
   const [isVisible, setIsVisible] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [status, setStatus] = useState('idle');
+  const [errorMsg, setErrorMsg] = useState('');
   const sectionRef = useRef(null);
 
   useEffect(() => {
@@ -25,9 +26,12 @@ function Contact() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus('sending');
+    setErrorMsg('');
 
-    // ✅ Uses VITE_API_URL from .env — works both locally and on Vercel
-  const API_URL = import.meta.env.VITE_API_URL || 'https://portfolio-priyanshu-vv6p.vercel.app';
+    // In dev, use empty string so requests go through Vite proxy; in production, use VITE_API_URL
+    const API_URL = import.meta.env.DEV
+      ? ''
+      : (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
 
     try {
       const response = await fetch(`${API_URL}/api/contact`, {
@@ -35,18 +39,22 @@ function Contact() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
+
       if (response.ok) {
         setStatus('sent');
         setFormData({ name: '', email: '', message: '' });
         setTimeout(() => setStatus('idle'), 3000);
       } else {
+        const data = await response.json().catch(() => ({}));
+        setErrorMsg(data.error || 'Something went wrong. Please try again.');
         setStatus('error');
-        setTimeout(() => setStatus('idle'), 3000);
+        setTimeout(() => { setStatus('idle'); setErrorMsg(''); }, 4000);
       }
     } catch (error) {
       console.error('Error sending message:', error);
+      setErrorMsg('Network error. Please check your connection.');
       setStatus('error');
-      setTimeout(() => setStatus('idle'), 3000);
+      setTimeout(() => { setStatus('idle'); setErrorMsg(''); }, 4000);
     }
   };
 
@@ -169,6 +177,14 @@ function Contact() {
                   rows={5}
                 />
               </div>
+
+              {/* ✅ Show specific error message from server */}
+              {errorMsg && (
+                <p style={{ color: '#ef4444', fontSize: '0.85rem', marginBottom: '0.5rem' }}>
+                  ⚠️ {errorMsg}
+                </p>
+              )}
+
               <button
                 type="submit"
                 className={styles.submitBtn}

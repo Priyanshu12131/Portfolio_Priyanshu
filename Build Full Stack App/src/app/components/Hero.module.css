@@ -95,9 +95,14 @@
   white-space: nowrap;
 }
 
-.primaryBtn:hover {
+.primaryBtn:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
+}
+
+.primaryBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .dropdown {
@@ -130,9 +135,14 @@
   font-family: inherit;
 }
 
-.dropdownItem:hover {
+.dropdownItem:hover:not(:disabled) {
   background: var(--accent-glow);
   color: var(--accent-primary);
+}
+
+.dropdownItem:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* Contact button */
@@ -159,14 +169,13 @@
   box-shadow: 0 8px 25px var(--contact-shadow);
 }
 
-/* ✅ Avatar container — matches page background so no white/grey box shows */
+/* Avatar container — transparent background, no white box */
 .avatarContainer {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-/* ✅ This removes any white square/box under the avatar circle */
 .avatarContainer > div,
 .avatarContainer img {
   background: transparent !important;
@@ -211,5 +220,5 @@
   .tagline { font-size: 1rem; }
   .ctaButtons { flex-direction: column; align-items: center; }
   .primaryBtn, .contactBtn { width: 100%; justify-content: center; }
-  .dropdown { left: 0; transform: none; }
+  .dropdown { left: 0; transform: none; min-width: 100%; }
 }

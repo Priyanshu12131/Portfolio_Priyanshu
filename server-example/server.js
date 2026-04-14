@@ -39,40 +39,61 @@ app.use('/api/', limiter);
 // ─── CORS ─────────────────────────────────────────────────────────────────────
 const allowedOrigins = process.env.CORS_ORIGIN
   ? process.env.CORS_ORIGIN.split(',').map(o => o.trim())
-  : ['https://portfolio-priyanshu-tpw5.vercel.app/'];
+  : ['http://localhost:5173'];
 
 app.use(
   cors({
     origin: function (origin, callback) {
       if (!origin) return callback(null, true);
-      if (allowedOrigins.indexOf(origin) === -1) {
-        console.warn(`❌ CORS blocked for origin: ${origin}`);
-        return callback(new Error('CORS policy error'), false);
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
       }
-      return callback(null, true);
+      console.warn(`❌ CORS blocked for origin: ${origin}`);
+      return callback(new Error('CORS policy error'), false);
     },
     credentials: true,
   })
 );
+
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  } else {
+    res.header('Access-Control-Allow-Origin', allowedOrigins[0]);
+  }
+  res.header('Access-Control-Allow-Headers', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
+  next();
+});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
 // ─── MongoDB Connection ───────────────────────────────────────────────────────
+let isMongoConnected = false;
+
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(async () => {
+    isMongoConnected = true;
     console.log('✅ MongoDB connected successfully');
-    await seedResumesFromFolder(); // auto-upload files from /resume folder
+    await seedResumesFromFolder();
   })
   .catch((err) => {
-    console.error('❌ MongoDB connection error:', err);
-    process.exit(1);
+    console.error('❌ MongoDB connection error:', err.message);
+    isMongoConnected = false;
   });
+
+mongoose.connection.on('connected', () => { isMongoConnected = true; });
+mongoose.connection.on('disconnected', () => { isMongoConnected = false; });
 
 // ─── GridFS Helpers ───────────────────────────────────────────────────────────
 function getBucket() {
+  if (!isMongoConnected || !mongoose.connection.db) {
+    throw new Error('Database not connected. Please try again in a moment.');
+  }
   return new GridFSBucket(mongoose.connection.db, { bucketName: 'resumes' });
 }
 
@@ -81,48 +102,60 @@ async function deleteExistingFile(bucket, filename) {
   await Promise.all(files.map(f => bucket.delete(f._id)));
 }
 
-// ─── Auto-seed: reads /resume folder and uploads to GridFS on first run ───────
-//  Your folder already has: resume (2).pdf  and  resume2.docx
-//  Just rename them or keep as-is — the code picks the first .pdf and .docx it finds.
+// ─── Auto-seed: reads /resume folder and uploads to GridFS ───────────────────
 async function seedResumesFromFolder() {
-  const resumeDir = path.join(__dirname, 'resume');
-  if (!fs.existsSync(resumeDir)) {
-    console.log('ℹ️  No /resume folder found, skipping auto-seed.');
-    return;
-  }
-
-  const fileMap = { pdf: null, docx: null };
-  for (const entry of fs.readdirSync(resumeDir)) {
-    const ext = path.extname(entry).toLowerCase().replace('.', '');
-    if (ext === 'pdf'  && !fileMap.pdf)  fileMap.pdf  = entry;
-    if (ext === 'docx' && !fileMap.docx) fileMap.docx = entry;
-  }
-
-  const bucket = getBucket();
-
-  for (const [ext, filename] of Object.entries(fileMap)) {
-    if (!filename) { console.log(`⚠️  No ${ext.toUpperCase()} in /resume folder.`); continue; }
-
-    // Skip if already seeded
-    const existing = await bucket.find({ filename: `resume.${ext}` }).toArray();
-    if (existing.length > 0) {
-      console.log(`ℹ️  resume.${ext} already in MongoDB — skipping seed.`);
-      continue;
+  try {
+    const resumeDir = path.join(__dirname, 'resume');
+    if (!fs.existsSync(resumeDir)) {
+      console.log('ℹ️  No /resume folder found, skipping auto-seed.');
+      return;
     }
 
-    const filePath = path.join(resumeDir, filename);
-    const mimeType = ext === 'pdf'
-      ? 'application/pdf'
-      : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+    const fileMap = { pdf: null, docx: null };
+    for (const entry of fs.readdirSync(resumeDir)) {
+      const ext = path.extname(entry).toLowerCase().replace('.', '');
+      if (ext === 'pdf' && !fileMap.pdf) fileMap.pdf = entry;
+      if (ext === 'docx' && !fileMap.docx) fileMap.docx = entry;
+    }
 
-    await new Promise((resolve, reject) => {
-      const uploadStream = bucket.openUploadStream(`resume.${ext}`, {
-        metadata: { originalName: filename, mimetype: mimeType, uploadedAt: new Date() },
+    const bucket = getBucket();
+
+    for (const [ext, filename] of Object.entries(fileMap)) {
+      if (!filename) {
+        console.log(`⚠️  No ${ext.toUpperCase()} in /resume folder.`);
+        continue;
+      }
+
+      const existing = await bucket.find({ filename: `resume.${ext}` }).toArray();
+      if (existing.length > 0) {
+        console.log(`ℹ️  resume.${ext} already in MongoDB — skipping seed.`);
+        continue;
+      }
+
+      const filePath = path.join(resumeDir, filename);
+      const mimeType =
+        ext === 'pdf'
+          ? 'application/pdf'
+          : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+
+      await new Promise((resolve, reject) => {
+        const uploadStream = bucket.openUploadStream(`resume.${ext}`, {
+          metadata: {
+            originalName: filename,
+            mimetype: mimeType,
+            uploadedAt: new Date(),
+          },
+        });
+        fs.createReadStream(filePath).pipe(uploadStream);
+        uploadStream.on('finish', () => {
+          console.log(`✅ Seeded resume.${ext} → GridFS`);
+          resolve();
+        });
+        uploadStream.on('error', reject);
       });
-      fs.createReadStream(filePath).pipe(uploadStream);
-      uploadStream.on('finish', () => { console.log(`✅ Seeded resume.${ext} → GridFS`); resolve(); });
-      uploadStream.on('error', reject);
-    });
+    }
+  } catch (err) {
+    console.log('ℹ️ Seed skipped:', err.message);
   }
 }
 
@@ -135,7 +168,9 @@ const upload = multer({
       'application/pdf',
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     ];
-    allowed.includes(file.mimetype) ? cb(null, true) : cb(new Error('Only PDF and DOCX allowed'), false);
+    allowed.includes(file.mimetype)
+      ? cb(null, true)
+      : cb(new Error('Only PDF and DOCX allowed'), false);
   },
 });
 
@@ -156,7 +191,28 @@ const transporter = nodemailer.createTransport({
   auth: { user: process.env.GMAIL_USER, pass: process.env.GMAIL_PASS },
 });
 
+// ─── Health Check ─────────────────────────────────────────────────────────────
+app.get('/', (req, res) => {
+  res.json({ status: 'OK', message: '🚀 Backend is running!', dbConnected: isMongoConnected });
+});
+
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'OK',
+    message: 'Server is running',
+    dbConnected: isMongoConnected,
+    timestamp: new Date().toISOString()
+  });
+});
+
 // ─── Contact Route ────────────────────────────────────────────────────────────
+app.options('/api/contact', (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', process.env.CORS_ORIGIN?.split(',')[0] || '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.status(200).end();
+});
+
 app.post('/api/contact', async (req, res) => {
   const { name, email, message } = req.body;
   if (!name || !email || !message)
@@ -165,6 +221,9 @@ app.post('/api/contact', async (req, res) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email))
     return res.status(400).json({ error: 'Invalid email format' });
+
+  if (!isMongoConnected)
+    return res.status(503).json({ error: 'Database not available. Please try again shortly.' });
 
   try {
     const encryptedMessage = encryptMessage(message);
@@ -201,9 +260,7 @@ app.post('/api/contact', async (req, res) => {
   }
 });
 
-// ─── Resume Routes ────────────────────────────────────────────────────────────
-
-// POST /api/resume/upload  — replace a resume (admin only)
+// ─── Resume Upload ────────────────────────────────────────────────────────────
 app.post('/api/resume/upload', upload.single('resume'), async (req, res) => {
   const adminKey = process.env.ADMIN_KEY;
   if (adminKey && req.headers['x-admin-key'] !== adminKey)
@@ -212,14 +269,18 @@ app.post('/api/resume/upload', upload.single('resume'), async (req, res) => {
     return res.status(400).json({ error: 'No file provided' });
 
   try {
+    const bucket = getBucket();
     const ext      = req.file.mimetype === 'application/pdf' ? 'pdf' : 'docx';
     const filename = `resume.${ext}`;
-    const bucket   = getBucket();
 
     await deleteExistingFile(bucket, filename);
     await new Promise((resolve, reject) => {
       const uploadStream = bucket.openUploadStream(filename, {
-        metadata: { originalName: req.file.originalname, mimetype: req.file.mimetype, uploadedAt: new Date() },
+        metadata: {
+          originalName: req.file.originalname,
+          mimetype: req.file.mimetype,
+          uploadedAt: new Date(),
+        },
       });
       uploadStream.on('error', reject);
       uploadStream.on('finish', resolve);
@@ -230,37 +291,38 @@ app.post('/api/resume/upload', upload.single('resume'), async (req, res) => {
     res.status(200).json({ success: true, message: `${filename} uploaded successfully` });
   } catch (err) {
     console.error('❌ Resume upload error:', err);
-    res.status(500).json({ error: 'Upload failed.' });
+    res.status(500).json({ error: err.message || 'Upload failed.' });
   }
 });
 
-// GET /api/resume/download/:format  — download pdf or docx
+// ─── Resume Download ──────────────────────────────────────────────────────────
 app.get('/api/resume/download/:format', async (req, res) => {
   const { format } = req.params;
   if (!['pdf', 'docx'].includes(format))
     return res.status(400).json({ error: 'Invalid format. Use pdf or docx.' });
 
   const filename = `resume.${format}`;
-  const mimeType = format === 'pdf'
-    ? 'application/pdf'
-    : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+  const mimeType =
+    format === 'pdf'
+      ? 'application/pdf'
+      : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
 
   try {
     const bucket = getBucket();
     const files  = await bucket.find({ filename }).toArray();
     if (!files.length)
-      return res.status(404).json({ error: `No ${format.toUpperCase()} resume found.` });
+      return res.status(404).json({ error: `No ${format.toUpperCase()} resume found. Please upload one first.` });
 
     res.setHeader('Content-Type', mimeType);
     res.setHeader('Content-Disposition', `attachment; filename="Priyanshu_Kumar_Resume.${format}"`);
     bucket.openDownloadStreamByName(filename).pipe(res);
   } catch (err) {
     console.error('❌ Resume download error:', err);
-    res.status(500).json({ error: 'Download failed.' });
+    res.status(500).json({ error: err.message || 'Download failed.' });
   }
 });
 
-// GET /api/resume/info  — check what resumes are stored
+// ─── Resume Info ──────────────────────────────────────────────────────────────
 app.get('/api/resume/info', async (req, res) => {
   try {
     const bucket = getBucket();
@@ -273,16 +335,8 @@ app.get('/api/resume/info', async (req, res) => {
       })),
     });
   } catch (err) {
-    res.status(500).json({ error: 'Could not fetch resume info.' });
+    res.status(500).json({ error: err.message || 'Could not fetch resume info.' });
   }
-});
-
-// ─── Other Routes ─────────────────────────────────────────────────────────────
-const downloadRoutes = require('./routes/download');
-app.use('/api', downloadRoutes);
-
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', message: 'Server is running', timestamp: new Date().toISOString() });
 });
 
 // ─── Error Handlers ───────────────────────────────────────────────────────────
@@ -299,7 +353,9 @@ app.use((req, res) => {
 const PORT = process.env.PORT || 7000;
 const server = app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
 server.on('error', (err) => {
-  if (err.code === 'EADDRINUSE') { console.error(`❌ Port ${PORT} is in use.`); process.exit(1); }
+  if (err.code === 'EADDRINUSE') {
+    console.error(`❌ Port ${PORT} is in use.`);
+  }
 });
 
 module.exports = app;

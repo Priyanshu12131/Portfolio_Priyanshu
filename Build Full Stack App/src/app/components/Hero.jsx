@@ -6,8 +6,10 @@ import styles from './Hero.module.css';
 
 const roles = ['VLSI Engineer', 'Full Stack Developer'];
 
-// ✅ Reads your backend URL from .env  →  VITE_API_URL=http://localhost:7000
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:7000';
+// In dev, use empty string so requests go through Vite proxy; in production, use VITE_API_URL
+const API_BASE = import.meta.env.DEV
+  ? ''
+  : (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
 
 function Hero() {
   const [roleText, setRoleText] = useState('');

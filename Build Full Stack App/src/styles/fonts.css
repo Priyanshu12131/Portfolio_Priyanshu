@@ -2,7 +2,7 @@
 /* Google Fonts Import */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@300;400;500;600;700&display=swap');
 
-/* ── Font Face Definitions ── */
+/* ── Font Variables ── */
 :root {
   --font-sans: 'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
   --font-display: 'Poppins', 'Inter', 'Segoe UI', sans-serif;
@@ -20,6 +20,7 @@ html {
 }
 
 body {
+  /* ✅ Uses the CSS variable — not overridden by a hardcoded stack */
   font-family: var(--font-sans);
   font-weight: 400;
   font-size: 1rem;
