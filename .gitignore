@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Environment files
+.env
+.env.*
+*.env
+!.env.example
+!*.env.example
+server-example/.env
+Build Full Stack App/.env
+
+# Build outputs
+dist/
+build/
+.DS_Store
+*.log

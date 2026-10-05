@@ -15,6 +15,9 @@ dotenv.config();
 
 const app = express();
 
+// ─── Trust Proxy (required behind reverse proxies like Render, Vercel, etc.) ──
+app.set('trust proxy', 1);
+
 // ─── Encryption Config ────────────────────────────────────────────────────────
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || 'your_32_char_secret_key_here!!!!';
 const IV_LENGTH = 16;
@@ -70,6 +73,14 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/public', express.static(path.join(__dirname, 'public')));
+app.use('/resume', express.static(path.join(__dirname, 'resume')));
+
+const RESUME_DIR = path.join(__dirname, 'resume');
+
+
+if (!fs.existsSync(RESUME_DIR)) {
+  fs.mkdirSync(RESUME_DIR, { recursive: true });
+}
 
 // ─── MongoDB Connection ───────────────────────────────────────────────────────
 let isMongoConnected = false;
@@ -100,6 +111,12 @@ function getBucket() {
 async function deleteExistingFile(bucket, filename) {
   const files = await bucket.find({ filename }).toArray();
   await Promise.all(files.map(f => bucket.delete(f._id)));
+}
+
+function saveResumeToDisk(file, filename) {
+  const filePath = path.join(RESUME_DIR, filename);
+  fs.writeFileSync(filePath, file.buffer);
+  return filePath;
 }
 
 // ─── Auto-seed: reads /resume folder and uploads to GridFS ───────────────────
@@ -188,12 +205,21 @@ const Contact = mongoose.model('Contact', contactSchema);
 // ─── Nodemailer Transporter ───────────────────────────────────────────────────
 const transporter = nodemailer.createTransport({
   service: 'gmail',
-  auth: { user: process.env.GMAIL_USER, pass: process.env.GMAIL_PASS },
+  auth: {
+    user: process.env.GMAIL_USER ? process.env.GMAIL_USER.trim() : '',
+    pass: process.env.GMAIL_PASS ? process.env.GMAIL_PASS.replace(/\s+/g, '') : '',
+  },
 });
 
+// Verify email connection with a timeout — don't let it block startup
+const verifyTimeout = setTimeout(() => {
+  console.warn('⚠️ Email transporter verify timed out — emails will still be attempted on send');
+}, 10000);
+
 transporter.verify((error, success) => {
+  clearTimeout(verifyTimeout);
   if (error) {
-    console.error('❌ Email transporter error:', error.message);
+    console.warn('⚠️ Email transporter not verified:', error.message, '— emails will still be attempted on send');
   } else {
     console.log('✅ Email transporter ready');
   }
@@ -288,6 +314,8 @@ app.post('/api/resume/upload', upload.single('resume'), async (req, res) => {
     const ext      = req.file.mimetype === 'application/pdf' ? 'pdf' : 'docx';
     const filename = `resume.${ext}`;
 
+    saveResumeToDisk(req.file, filename);
+
     await deleteExistingFile(bucket, filename);
     await new Promise((resolve, reject) => {
       const uploadStream = bucket.openUploadStream(filename, {
@@ -323,6 +351,22 @@ app.get('/api/resume/download/:format', async (req, res) => {
       : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
 
   try {
+    const candidatePaths = [
+      path.join(RESUME_DIR, filename),
+      path.join(RESUME_DIR, `Priyanshu_Kumar_Resume.${format}`),
+    ];
+    if (format === 'pdf') {
+      candidatePaths.push(path.join(RESUME_DIR, 'Priyanshu_Kumar_FPGA_Resume 2.0.pdf'));
+    }
+
+    for (const p of candidatePaths) {
+      if (fs.existsSync(p)) {
+        res.setHeader('Content-Type', mimeType);
+        res.setHeader('Content-Disposition', `attachment; filename="Priyanshu_Kumar_Resume.${format}"`);
+        return res.sendFile(path.resolve(p));
+      }
+    }
+
     const bucket = getBucket();
     const files  = await bucket.find({ filename }).toArray();
     if (!files.length)
@@ -334,6 +378,49 @@ app.get('/api/resume/download/:format', async (req, res) => {
   } catch (err) {
     console.error('❌ Resume download error:', err);
     res.status(500).json({ error: err.message || 'Download failed.' });
+  }
+});
+
+// ─── Resume View (Inline in Browser Tab) ──────────────────────────────────────
+app.get('/api/resume/view/:format', async (req, res) => {
+  const { format } = req.params;
+  if (!['pdf', 'docx'].includes(format))
+    return res.status(400).json({ error: 'Invalid format. Use pdf or docx.' });
+
+  const filename = `resume.${format}`;
+  const mimeType =
+    format === 'pdf'
+      ? 'application/pdf'
+      : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+
+  try {
+    const candidatePaths = [
+      path.join(RESUME_DIR, filename),
+      path.join(RESUME_DIR, `Priyanshu_Kumar_Resume.${format}`),
+    ];
+    if (format === 'pdf') {
+      candidatePaths.push(path.join(RESUME_DIR, 'Priyanshu_Kumar_FPGA_Resume 2.0.pdf'));
+    }
+
+    for (const p of candidatePaths) {
+      if (fs.existsSync(p)) {
+        res.setHeader('Content-Type', mimeType);
+        res.setHeader('Content-Disposition', `inline; filename="Priyanshu_Kumar_Resume.${format}"`);
+        return res.sendFile(path.resolve(p));
+      }
+    }
+
+    const bucket = getBucket();
+    const files  = await bucket.find({ filename }).toArray();
+    if (!files.length)
+      return res.status(404).json({ error: `No ${format.toUpperCase()} resume found.` });
+
+    res.setHeader('Content-Type', mimeType);
+    res.setHeader('Content-Disposition', `inline; filename="Priyanshu_Kumar_Resume.${format}"`);
+    bucket.openDownloadStreamByName(filename).pipe(res);
+  } catch (err) {
+    console.error('❌ Resume view error:', err);
+    res.status(500).json({ error: err.message || 'Could not view resume.' });
   }
 });
 
@@ -352,6 +439,129 @@ app.get('/api/resume/info', async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message || 'Could not fetch resume info.' });
   }
+});
+
+// ─── Resume Data (Structured JSON) ───────────────────────────────────────────
+app.get('/api/resume/data', (req, res) => {
+  res.json({
+    name: 'Priyanshu Kumar',
+    title: 'Aspiring FPGA Design Engineer | Digital Design & Embedded Systems',
+    contact: {
+      phone: '+91 9162132852',
+      email: 'priyanshuk7839@gmail.com',
+      linkedin: 'https://www.linkedin.com/in/priyanshu-kumar-4454053b2',
+      portfolio: 'https://portfolio-priyanshu-wheat.vercel.app/',
+      github: 'https://github.com/Priyanshu12131',
+    },
+    summary:
+      'Computer & Communication Engineering student with a strong foundation in digital design fundamentals (combinational & sequential logic, FSMs, timing, CDC) and hands-on experience in Verilog/VHDL, FPGA prototyping on Xilinx Vivado, and circuit simulation. Complements hardware skills with full-stack web development (React, Node.js) and IoT/embedded projects, bringing an end-to-end perspective on hardware–software integration.',
+    technicalSkills: {
+      digitalDesign: [
+        'Combinational & Sequential Logic',
+        'FSMs',
+        'Timing Analysis',
+        'Clock Domain Crossing (CDC) concepts',
+        'VLSI',
+      ],
+      hdls: ['Verilog', 'VHDL — synthesizable coding & simulation'],
+      fpgaTools: [
+        'Xilinx Vivado (synthesis, place-and-route, timing analysis)',
+        'Waveform analysis / testbenches',
+      ],
+      embeddedHardware: [
+        'Embedded Systems & Programming',
+        'Circuit Design',
+        'IoT',
+        'Signal Processing',
+        'LTSpice',
+      ],
+      programming: ['C', 'C++', 'Java', 'JavaScript'],
+      fullStack: ['React', 'Node.js', 'Express', 'MongoDB', 'HTML', 'CSS'],
+      platformsTools: ['MATLAB', 'Scilab', 'Git/GitHub', 'RedHat Linux', 'MS Excel/Word'],
+    },
+    education: [
+      {
+        degree: 'B.Tech in Computer and Communication Engineering',
+        institution: 'JK Lakshmipat University, Jaipur, Rajasthan',
+        status: 'Expected May 2027',
+      },
+    ],
+    experience: [
+      {
+        role: 'VHDL / FPGA Design Intern',
+        company: 'IIEST Shibpur, Kolkata',
+        period: 'May 2025 – Aug 2025',
+        highlights: [
+          'Designed and implemented digital logic modules in VHDL, translating functional specifications into synthesizable RTL for FPGA targets.',
+          'Practiced simulation and waveform-based verification of digital circuits, gaining exposure to FPGA design flow from RTL to implementation.',
+          'Contributed to embedded system development, reinforcing hardware–software integration fundamentals.',
+        ],
+      },
+      {
+        role: 'Cadence Software Hands-on Training',
+        company: 'Punjab Engineering College (PEC)',
+        period: 'Hands-on Training',
+        highlights: [
+          'Built proficiency in Cadence for circuit simulation and analysis, including schematic capture and functional verification.',
+          'Completed NAND and NOR gate circuit analysis projects, strengthening fundamentals in combinational logic design.',
+        ],
+      },
+    ],
+    projects: [
+      {
+        title: 'Automated Vehicle Lane-Changing System',
+        domain: 'FPGA · VHDL/Verilog',
+        description:
+          'Designed a real-time FPGA-based control system for automated lane changing using VHDL/Verilog, including FSM-driven decision logic.',
+      },
+      {
+        title: 'Arithmetic Logic Unit (ALU)',
+        domain: 'FPGA · Digital Design',
+        description:
+          'Implemented and verified a multi-function ALU on FPGA through RTL design and simulation-based testing.',
+      },
+      {
+        title: 'Traffic Light Controller',
+        domain: 'FPGA · FSM Design',
+        description:
+          'Developed an FSM-based controller for efficient, rule-driven traffic signal management and timing control.',
+      },
+      {
+        title: 'UART Communication Module',
+        domain: 'Digital Design',
+        description:
+          'Implemented a UART transmitter/receiver for serial data communication between digital systems, verified via testbench simulation.',
+      },
+      {
+        title: 'FIFO Buffer Design',
+        domain: 'Digital Design',
+        description:
+          'Designed and verified a 64×8 FIFO buffer using SystemVerilog with read/write pointers, memory, and empty/full flag logic. Verified reset, read, write, full, empty, and simultaneous read/write operations for reliable data storage and retrieval.',
+      },
+      {
+        title: 'MeetCut',
+        domain: 'Full-Stack Web App',
+        description:
+          'Built a meeting-scheduling platform with time-slot booking and calendar management using a React frontend and a Node.js/Express API.',
+      },
+      {
+        title: 'UrbanNest',
+        domain: 'Full-Stack Web App',
+        description:
+          'Developed a real estate/property-listing platform with search, filtering, and a management dashboard.',
+      },
+    ],
+    accomplishments: [
+      'Completed multiple hands-on projects spanning signal processing, digital electronics, and FPGA-based design.',
+      'Gained practical experience in Cadence for NAND/NOR gate circuit analysis.',
+      'Participated in the 5G Use Case Lab workshop, building awareness of telecommunications systems.',
+    ],
+    hobbies: ['Playing Cricket', 'Communicating with People'],
+    references: [
+      { name: 'Dr. Devika Kataria', email: 'devikakataria@jklu.edu.in' },
+      { name: 'Dr. Gaurav Mani Khanal', email: 'Gauravmanikhanal@jklu.edu.in' },
+    ],
+  });
 });
 
 // ─── Error Handlers ───────────────────────────────────────────────────────────

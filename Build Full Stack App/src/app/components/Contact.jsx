@@ -28,10 +28,8 @@ function Contact() {
     setStatus('sending');
     setErrorMsg('');
 
-    // In dev, use empty string so requests go through Vite proxy; in production, use VITE_API_URL
-    const API_URL = import.meta.env.DEV
-      ? ''
-      : (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+    // Both dev (Vite proxy) and production (Vercel services, same origin) use relative paths
+    const API_URL = '';
 
     try {
       const response = await fetch(`${API_URL}/api/contact`, {
