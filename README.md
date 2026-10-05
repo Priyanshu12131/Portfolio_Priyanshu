@@ -2,7 +2,7 @@
 
 A full-stack personal portfolio website built with **React** (frontend) and **Node.js/Express** (backend), featuring a contact form, resume download system, and MongoDB integration.
 
-🔗 **Live Demo:** [(https://portfolio-priyanshu1.vercel.app/)]
+🔗 **Live Demo:** [(https://portfolio-priyanshu-wheat.vercel.app/)]
 
 ---
 
