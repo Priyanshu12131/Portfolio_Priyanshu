@@ -4,38 +4,27 @@ import { Github, ExternalLink, Play, X } from 'lucide-react';
 import styles from './Projects.module.css';
 
 const projects = [
- {
-  title: 'Portfolio CMS',
-  description: 'Headless CMS for portfolios with rich text editor, media management, and REST API endpoints.',
-  tags: ['React', 'Node.js', 'MongoDB', 'REST API'],
-  category: 'Software',
-  subCategory: 'Full Stack',
-  stackType: 'Backend',
-  github: 'https://github.com/Priyanshu12131/Portfolio_Priyanshu',
-  live: 'https://portfolio-priyanshu-wheat.vercel.app/', // optional
-  videoDemo: null,
-  image: '/portfolio8.png',
-  gradient: 'linear-gradient(135deg, #10b981, #059669)',
-},
   {
-    title: 'Traffic Light Controller',
-    description: 'FSM-based traffic light controller implemented in Verilog with timing control and simulation waveforms.',
-    tags: ['Verilog', 'Xilinx Vivado', 'FSM'],
-    category: 'VLSI',
+    title: 'Automated Vehicle Lane-Changing System',
+    description:
+      'Designed a real-time FPGA-based control system for automated lane changing using VHDL/Verilog, including FSM-driven decision logic.',
+    tags: ['FPGA', 'VHDL/Verilog', 'FSM', 'Xilinx Vivado', 'Embedded'],
+    category: 'FPGA & Digital Design',
     subCategory: null,
     stackType: null,
     github: 'https://github.com/Priyanshu12131/VLSI_PROJECT',
     live: null,
-    videoDemo: 'https://drive.google.com/file/d/1LhSIbnppoGhSDLGqvRZ8BER3Uh0H8FVn/view?usp=sharing',
-    image: '/trafficlightcontroller.png',
-    gradient: 'linear-gradient(135deg, #f43f5e, #fb7185)',
-    emoji: '🚦',
+    videoDemo: null,
+    image: null,
+    gradient: 'linear-gradient(135deg, #0284c7, #2563eb)',
+    emoji: '🚗',
   },
   {
-    title: 'Design and Verification of a 4-Bit Arithmetic Logic Unit (ALU)',
-    description: 'A 4-bit Arithmetic Logic Unit supporting ADD, SUB, AND, OR, XOR operations, designed and verified using VHDL.',
-    tags: ['VHDL', 'Cadence', 'Simulation'],
-    category: 'VLSI',
+    title: 'Arithmetic Logic Unit (ALU)',
+    description:
+      'Implemented and verified a multi-function ALU on FPGA through RTL design and simulation-based testing.',
+    tags: ['FPGA', 'Digital Design', 'VHDL', 'RTL Design', 'Simulation'],
+    category: 'FPGA & Digital Design',
     subCategory: null,
     stackType: null,
     github: 'https://github.com/Priyanshu12131/4-Bit-Alu',
@@ -46,10 +35,98 @@ const projects = [
     emoji: '🔢',
   },
   {
+    title: 'Traffic Light Controller',
+    description:
+      'Developed an FSM-based controller for efficient, rule-driven traffic signal management and timing control.',
+    tags: ['FPGA', 'Verilog', 'FSM Design', 'Xilinx Vivado'],
+    category: 'FPGA & Digital Design',
+    subCategory: null,
+    stackType: null,
+    github: 'https://github.com/Priyanshu12131/VLSI_PROJECT',
+    live: null,
+    videoDemo: 'https://drive.google.com/file/d/1LhSIbnppoGhSDLGqvRZ8BER3Uh0H8FVn/view?usp=sharing',
+    image: '/trafficlightcontroller.png',
+    gradient: 'linear-gradient(135deg, #f43f5e, #fb7185)',
+    emoji: '🚦',
+  },
+  {
+    title: 'UART Communication Module',
+    description:
+      'Implemented a UART transmitter/receiver for serial data communication between digital systems, verified via testbench simulation.',
+    tags: ['Verilog', 'UART', 'Digital Design', 'Testbench', 'Simulation'],
+    category: 'FPGA & Digital Design',
+    subCategory: null,
+    stackType: null,
+    github: 'https://github.com/Priyanshu12131/UART',
+    live: null,
+    videoDemo: null,
+    image: null,
+    gradient: 'linear-gradient(135deg, #06b6d4, #0891b2)',
+    emoji: '📡',
+  },
+  {
+    title: 'FIFO Buffer Design',
+    description:
+      'Designed and verified a 64×8 FIFO buffer using SystemVerilog with read/write pointers, memory, and empty/full flag logic. Verified reset, read, write, full, empty, and simultaneous read/write operations for reliable data storage and retrieval.',
+    tags: ['Digital Design', 'FIFO Buffer', 'SystemVerilog', 'Timing Analysis'],
+    category: 'FPGA & Digital Design',
+    subCategory: null,
+    stackType: null,
+    github: 'https://github.com/Priyanshu12131/FIFO_Buffer',
+    live: null,
+    videoDemo: null,
+    image: null,
+    gradient: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+    emoji: '🔄',
+  },
+  {
+    title: 'MeetCut',
+    description:
+      'Built a meeting-scheduling platform with time-slot booking and calendar management using a React frontend and a Node.js/Express API.',
+    tags: ['React', 'Node.js', 'Express', 'MongoDB', 'Calendar API'],
+    category: 'Software',
+    subCategory: 'Full Stack',
+    stackType: 'Mix',
+    github: 'https://github.com/shreychechani/MeetCut',
+    live: null,
+    videoDemo: null,
+    image: null,
+    gradient: 'linear-gradient(135deg, #10b981, #059669)',
+    emoji: '📅',
+  },
+  {
+    title: 'UrbanNest',
+    description:
+      'Developed a real estate/property-listing platform with search, filtering, and a management dashboard.',
+    tags: ['React', 'Node.js', 'Express', 'MongoDB', 'REST API'],
+    category: 'Software',
+    subCategory: 'Full Stack',
+    stackType: 'Mix',
+    github: 'https://github.com/Shorya1117/UrbanNest',
+    live: null,
+    videoDemo: null,
+    image: null,
+    gradient: 'linear-gradient(135deg, #f59e0b, #d97706)',
+    emoji: '🏡',
+  },
+  {
+    title: 'Portfolio CMS',
+    description: 'Headless CMS for portfolios with rich text editor, media management, and REST API endpoints.',
+    tags: ['React', 'Node.js', 'MongoDB', 'REST API'],
+    category: 'Software',
+    subCategory: 'Full Stack',
+    stackType: 'Backend',
+    github: 'https://github.com/Priyanshu12131/Portfolio_Priyanshu',
+    live: 'https://portfolio-priyanshu-wheat.vercel.app/',
+    videoDemo: null,
+    image: '/portfolio8.png',
+    gradient: 'linear-gradient(135deg, #10b981, #059669)',
+  },
+  {
     title: 'Divide Counter',
     description: 'Frequency divider counter circuit implemented in Verilog, verified on FPGA with simulation and synthesis reports.',
     tags: ['Verilog', 'FPGA', 'Xilinx'],
-    category: 'VLSI',
+    category: 'FPGA & Digital Design',
     subCategory: null,
     stackType: null,
     github: 'https://github.com/Priyanshu12131/Divider_Counter',
@@ -103,7 +180,7 @@ const projects = [
   },
 ];
 
-const mainCategories = ['All', 'Software', 'VLSI', 'Communication'];
+const mainCategories = ['All', 'FPGA & Digital Design', 'Software', 'VLSI', 'Communication'];
 const softwareSubFilters = ['All', 'Frontend', 'Backend', 'Mix'];
 const stackTypeLabels = { Frontend: 'Frontend', Backend: 'Backend', Mix: 'Full Stack' };
 
@@ -305,6 +382,7 @@ function Projects() {
               animate={isVisible ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.4, delay: i * 0.08 }}
             >
+              {cat === 'FPGA & Digital Design' && '⚡ '}
               {cat === 'Software' && '💻 '}
               {cat === 'VLSI' && '🔬 '}
               {cat === 'Communication' && '📡 '}

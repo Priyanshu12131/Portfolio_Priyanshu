@@ -4,12 +4,64 @@ import styles from './Skills.module.css';
 
 const skillCategories = [
   {
-    title: 'Software',
-    icon: '💻',
+    title: 'Digital Design & FPGA',
+    icon: '⚡',
     color: '#818cf8',
     subCategories: [
       {
-        title: 'Full Stack',
+        title: 'Digital Design & Concepts',
+        subGroups: [
+          {
+            title: '',
+            skills: [
+              { name: 'Combinational Logic', percentage: 92, icon: '🔀' },
+              { name: 'Sequential Logic', percentage: 90, icon: '⏱️' },
+              { name: 'FSMs Design', percentage: 92, icon: '🔄' },
+              { name: 'Timing Analysis', percentage: 86, icon: '📈' },
+              { name: 'Clock Domain Crossing (CDC)', percentage: 84, icon: '⏳' },
+              { name: 'VLSI Concepts', percentage: 82, icon: '🔬' },
+            ],
+          },
+        ],
+      },
+      {
+        title: 'HDLs & FPGA Prototyping',
+        subGroups: [
+          {
+            title: '',
+            skills: [
+              { name: 'Verilog', percentage: 88, icon: '🧮' },
+              { name: 'VHDL', percentage: 85, icon: '🔌' },
+              { name: 'Xilinx Vivado', percentage: 88, icon: '🧩' },
+              { name: 'Waveform Analysis / Testbenches', percentage: 86, icon: '📊' },
+            ],
+          },
+        ],
+      },
+      {
+        title: 'Embedded & Hardware',
+        subGroups: [
+          {
+            title: '',
+            skills: [
+              { name: 'Embedded Systems', percentage: 82, icon: '💡' },
+              { name: 'Circuit Design', percentage: 84, icon: '🔋' },
+              { name: 'LTspice', percentage: 85, icon: '〰️' },
+              { name: 'Cadence', percentage: 80, icon: '🔮' },
+              { name: 'IoT & Signal Processing', percentage: 78, icon: '📡' },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    title: 'Software & Full Stack',
+    icon: '💻',
+    color: '#10b981',
+    subCategories: [
+      {
+        title: 'Full-Stack Development',
         subGroups: [
           {
             title: 'Frontend',
@@ -22,13 +74,12 @@ const skillCategories = [
             ],
           },
           {
-            title: 'Backend',
+            title: 'Backend & Database',
             skills: [
               { name: 'Node.js', percentage: 85, icon: '🟢' },
-              { name: 'Express.js', percentage: 83, icon: '🚂' },
-              { name: 'MongoDB', percentage: 80, icon: '🍃' },
+              { name: 'Express', percentage: 83, icon: '🚂' },
+              { name: 'MongoDB', percentage: 82, icon: '🍃' },
               { name: 'REST APIs', percentage: 88, icon: '🔗' },
-              { name: 'PostgreSQL', percentage: 72, icon: '🐘' },
             ],
           },
         ],
@@ -39,26 +90,11 @@ const skillCategories = [
           {
             title: '',
             skills: [
-              { name: 'Python', percentage: 85, icon: '🐍' },
-              { name: 'C/C++', percentage: 78, icon: '⚙️' },
-              { name: 'Java', percentage: 72, icon: '☕' },
-              { name: 'VHDL', percentage: 75, icon: '🔌' },
-              { name: 'Verilog', percentage: 78, icon: '🧮' },
-            ],
-          },
-        ],
-      },
-      {
-        title: 'Software Tools',
-        subGroups: [
-          {
-            title: '',
-            skills: [
-              { name: 'Git', percentage: 92, icon: '🔧' },
-              { name: 'Docker', percentage: 72, icon: '🐳' },
-              { name: 'Vite', percentage: 85, icon: '⚡' },
-              { name: 'Figma', percentage: 68, icon: '🎭' },
-              { name: 'Red Hat', percentage: 70, icon: '🎩' },
+              { name: 'C', percentage: 85, icon: '⚙️' },
+              { name: 'C++', percentage: 82, icon: '🔧' },
+              { name: 'Java', percentage: 78, icon: '☕' },
+              { name: 'JavaScript', percentage: 88, icon: '🟨' },
+              { name: 'Python', percentage: 84, icon: '🐍' },
             ],
           },
         ],
@@ -66,66 +102,34 @@ const skillCategories = [
     ],
   },
   {
-    title: 'VLSI',
-    icon: '🔬',
-    color: '#f472b6',
-    subCategories: [
-      {
-        title: 'Design Domains',
-        subGroups: [
-          {
-            title: '',
-            skills: [
-              { name: 'CMOS Design', percentage: 80, icon: '🔋' },
-              { name: 'Analog Design', percentage: 75, icon: '〰️' },
-              { name: 'Digital Verification', percentage: 78, icon: '✅' },
-              { name: 'Physical Design', percentage: 72, icon: '📐' },
-              { name: 'Circuit Design', percentage: 77, icon: '🔌' },
-            ],
-          },
-        ],
-      },
-      {
-        title: 'VLSI Tools',
-        subGroups: [
-          {
-            title: '',
-            skills: [
-              { name: 'Xilinx Vivado', percentage: 80, icon: '🧩' },
-              { name: 'LTspice', percentage: 85, icon: '📊' },
-              { name: 'Cadence', percentage: 70, icon: '🔮' },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-  {
-    title: 'Communication',
+    title: 'Platforms & Tools',
     icon: '📡',
     color: '#34d399',
     subCategories: [
       {
-        title: 'Domains',
+        title: 'Engineering Platforms & OS',
         subGroups: [
           {
             title: '',
             skills: [
-              { name: 'Signal Analysis', percentage: 80, icon: '📶' },
-              { name: 'Digital Comm.', percentage: 82, icon: '📨' },
-              { name: 'DSP', percentage: 75, icon: '🎛️' },
+              { name: 'Git / GitHub', percentage: 92, icon: '🐙' },
+              { name: 'RedHat Linux', percentage: 82, icon: '🎩' },
+              { name: 'MATLAB', percentage: 82, icon: '🔢' },
+              { name: 'Scilab', percentage: 76, icon: '🧬' },
+              { name: 'MS Excel / Word', percentage: 90, icon: '📑' },
             ],
           },
         ],
       },
       {
-        title: 'DSP Tools',
+        title: 'Communication & DSP',
         subGroups: [
           {
             title: '',
             skills: [
-              { name: 'MATLAB', percentage: 82, icon: '🔢' },
-              { name: 'Scilab', percentage: 70, icon: '🧬' },
+              { name: 'Digital Comm.', percentage: 82, icon: '📨' },
+              { name: 'Signal Processing', percentage: 80, icon: '📶' },
+              { name: 'DSP Concepts', percentage: 78, icon: '🎛️' },
             ],
           },
         ],

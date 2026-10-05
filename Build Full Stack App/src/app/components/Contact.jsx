@@ -122,12 +122,31 @@ function Contact() {
                 <Linkedin size={22} />
               </a>
               <a
-                href="mailto:priyanshurajput1820@gmail.com"
+                href="mailto:priyanshuk7839@gmail.com"
                 className={styles.socialLink}
                 aria-label="Gmail"
               >
                 <Mail size={22} />
               </a>
+            </div>
+
+            {/* Academic References */}
+            <div className={styles.referencesBox}>
+              <h4 className={styles.refTitle}>Academic References</h4>
+              <div className={styles.refList}>
+                <div className={styles.refCard}>
+                  <p className={styles.refName}>Dr. Devika Kataria</p>
+                  <a href="mailto:devikakataria@jklu.edu.in" className={styles.refEmail}>
+                    devikakataria@jklu.edu.in
+                  </a>
+                </div>
+                <div className={styles.refCard}>
+                  <p className={styles.refName}>Dr. Gaurav Mani Khanal</p>
+                  <a href="mailto:Gauravmanikhanal@jklu.edu.in" className={styles.refEmail}>
+                    Gauravmanikhanal@jklu.edu.in
+                  </a>
+                </div>
+              </div>
             </div>
           </motion.div>
 

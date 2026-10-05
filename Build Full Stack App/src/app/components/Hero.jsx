@@ -4,7 +4,11 @@ import { Download, MessageCircle, ChevronDown, ChevronUp, FileText, File } from 
 import Avatar from './Avatar';
 import styles from './Hero.module.css';
 
-const roles = ['VLSI Engineer', 'Full Stack Developer'];
+const roles = [
+  'FPGA Design Engineer',
+  'Digital Design & Embedded Systems',
+  'Full Stack Developer',
+];
 
 // In dev, use empty string so requests go through Vite proxy; in production, use VITE_API_URL
 const API_BASE = import.meta.env.DEV
@@ -47,38 +51,40 @@ function Hero() {
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
-  // ── Download CV from MongoDB via backend ──────────────────────────────────
-  const handleDownloadCV = async (format) => {
+  // ── Download Resume via native download with direct static fallback ────
+  const handleDownloadCV = (format = 'pdf') => {
     setDropdownOpen(false);
     setDownloadError('');
     setDownloading(format);
 
     try {
-      const response = await fetch(`${API_BASE}/api/resume/download/${format}`);
-
-      if (!response.ok) {
-        const err = await response.json().catch(() => ({}));
-        throw new Error(err.error || `Could not download ${format.toUpperCase()}`);
-      }
-
-      // Create blob URL and trigger download
-      const blob = await response.blob();
-      const url  = URL.createObjectURL(blob);
+      const downloadUrl = `${API_BASE}/api/resume/download/${format}`;
       const link = document.createElement('a');
-      link.href     = url;
-      link.download = `Priyanshu_Kumar_Resume.${format}`;
+      link.href = downloadUrl;
+      link.setAttribute('download', `Priyanshu_Kumar_Resume.${format}`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+
+      setTimeout(() => setDownloading(null), 1200);
     } catch (err) {
       console.error('Download error:', err);
-      setDownloadError(err.message || 'Download failed. Please try again.');
-      // Auto-clear error after 4 seconds
-      setTimeout(() => setDownloadError(''), 4000);
-    } finally {
+      // Direct static fallback
+      const fallbackUrl = format === 'pdf' ? '/Priyanshu_Kumar_FPGA_Resume 2.0.pdf' : `/resume.${format}`;
+      const link = document.createElement('a');
+      link.href = fallbackUrl;
+      link.setAttribute('download', `Priyanshu_Kumar_Resume.${format}`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
       setDownloading(null);
     }
+  };
+
+  // ── Directly open PDF in browser tab ──
+  const handleOpenPDF = () => {
+    setDropdownOpen(false);
+    window.open('/Priyanshu_Kumar_FPGA_Resume 2.0.pdf', '_blank', 'noopener,noreferrer');
   };
 
   const scrollToContact = () => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
@@ -118,8 +124,9 @@ function Hero() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
           >
-            Bridging silicon and software, I specialize in VLSI engineering
-            and full-stack development to build efficient, high-performance solutions.
+            Aspiring FPGA Design Engineer with strong digital design fundamentals and hands-on experience
+            in Verilog/VHDL, Xilinx Vivado, and full-stack development — bridging silicon and software to build
+            efficient, high-performance solutions.
           </motion.p>
 
           {/* Download error message */}
@@ -140,14 +147,23 @@ function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1 }}
           >
-            <div className={styles.dropdownWrapper} ref={dropdownRef}>
+            <div className={styles.btnGroup} ref={dropdownRef}>
               <button
-                className={styles.primaryBtn}
-                onClick={() => setDropdownOpen(prev => !prev)}
+                className={styles.mainDownloadBtn}
+                onClick={() => handleDownloadCV('pdf')}
                 disabled={!!downloading}
+                title="Download Resume"
               >
-                <Download size={20} />
-                {downloading ? `Downloading ${downloading.toUpperCase()}…` : 'Download Resume'}
+                <Download size={19} />
+                {downloading === 'pdf' ? 'Downloading…' : 'Download Resume'}
+              </button>
+
+              <button
+                className={styles.chevronBtn}
+                onClick={() => setDropdownOpen(prev => !prev)}
+                aria-label="More download options"
+                title="Options"
+              >
                 {dropdownOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
               </button>
 
@@ -156,18 +172,23 @@ function Hero() {
                   <button
                     className={styles.dropdownItem}
                     onClick={() => handleDownloadCV('pdf')}
-                    disabled={!!downloading}
+                  >
+                    <Download size={16} />
+                    Download PDF (.pdf)
+                  </button>
+                  <button
+                    className={styles.dropdownItem}
+                    onClick={handleOpenPDF}
                   >
                     <FileText size={16} />
-                    {downloading === 'pdf' ? 'Downloading…' : 'Download as PDF'}
+                    View / Open PDF in Browser
                   </button>
                   <button
                     className={styles.dropdownItem}
                     onClick={() => handleDownloadCV('docx')}
-                    disabled={!!downloading}
                   >
                     <File size={16} />
-                    {downloading === 'docx' ? 'Downloading…' : 'Download as DOCX'}
+                    Download as Word (.docx)
                   </button>
                 </div>
               )}

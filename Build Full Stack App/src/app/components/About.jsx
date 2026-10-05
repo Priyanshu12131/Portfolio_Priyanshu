@@ -53,17 +53,18 @@ function About() {
             transition={{ duration: 0.6, delay: 0.4 }}
           >
             <p className={styles.bio}>
-              I'm <strong>Priyanshu Kumar</strong>, a Computer & Communication Engineering student
-              at <strong>JK Lakshmipati University, Jaipur</strong>, with a strong foundation in
-              <strong> Digital Design, FPGA Prototyping, VLSI</strong>, and <strong>Embedded Systems</strong>.
-              I blend hardware expertise with software skills to build innovative, end-to-end solutions.
+              I'm <strong>Priyanshu Kumar</strong>, an aspiring <strong>FPGA Design & Digital Systems Engineer</strong> and
+              Computer & Communication Engineering student at <strong>JK Lakshmipat University, Jaipur</strong> (Expected May 2027).
+              I have a strong foundation in digital design fundamentals — combinational & sequential logic,
+              FSMs, timing analysis, and clock domain crossing (CDC) — paired with hands-on experience in
+              <strong> Verilog/VHDL</strong>, FPGA prototyping on <strong>Xilinx Vivado</strong>, and circuit simulation.
             </p>
             <p className={styles.bio}>
-              From designing <strong>FPGA-based systems in Verilog/VHDL</strong> to building
-              full-stack web applications using the <strong>MERN stack</strong>, I thrive at the
-              intersection of silicon and software. I've interned at <strong>IIEST Shibpur, Kolkata</strong>,
-              worked with <strong>Cadence, Xilinx Vivado</strong>, and delivered projects ranging from
-              ALU design to e-commerce platforms — always driven by a passion for real-world impact.
+              I complement deep hardware expertise with <strong>full-stack web development (React, Node.js, Express, MongoDB)</strong> and
+              IoT/embedded projects, bringing an end-to-end perspective on hardware–software integration.
+              My journey includes hands-on experience as a <strong>VHDL / FPGA Design Intern at IIEST Shibpur, Kolkata</strong>,
+              circuit simulation training with <strong>Cadence at Punjab Engineering College (PEC)</strong>,
+              and building real-time FPGA control systems, digital logic architectures, and scalable web apps.
             </p>
 
             <div className={styles.infoCards}>
@@ -79,7 +80,7 @@ function About() {
                 <GraduationCap className={styles.icon} size={24} />
                 <div>
                   <h4>Education</h4>
-                  <p>B.Tech — JK Lakshmipati University</p>
+                  <p>B.Tech — JK Lakshmipat University</p>
                 </div>
               </div>
 
@@ -94,9 +95,24 @@ function About() {
               <div className={styles.infoCard}>
                 <Briefcase className={styles.icon} size={24} />
                 <div>
-                  <h4>Current Status</h4>
-                  <p>Open to Opportunities</p>
+                  <h4>Specialization</h4>
+                  <p>FPGA Design & Embedded Systems</p>
                 </div>
+              </div>
+            </div>
+
+            {/* Resume Accomplishments & Hobbies */}
+            <div className={styles.accomplishmentsBox}>
+              <h4 className={styles.subHeading}>Key Accomplishments</h4>
+              <ul className={styles.accomplishmentsList}>
+                <li>Completed multiple hands-on projects spanning signal processing, digital electronics, and FPGA-based design.</li>
+                <li>Gained practical experience in Cadence for NAND/NOR gate circuit analysis.</li>
+                <li>Participated in the 5G Use Case Lab workshop, building awareness of telecommunications systems.</li>
+              </ul>
+              <div className={styles.hobbiesRow}>
+                <span className={styles.hobbiesLabel}>Interests & Hobbies:</span>
+                <span className={styles.hobbyBadge}>🏏 Playing Cricket</span>
+                <span className={styles.hobbyBadge}>🗣️ Communicating with People</span>
               </div>
             </div>
           </motion.div>

@@ -90,6 +90,60 @@
   transform: translateY(-2px);
 }
 
+/* ── Academic References ── */
+.referencesBox {
+  margin-top: 1.75rem;
+  padding: 1.25rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+}
+
+.refTitle {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  margin-bottom: 0.75rem;
+}
+
+.refList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.refCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  border-left: 3px solid var(--accent-primary);
+}
+
+.refName {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.refEmail {
+  font-size: 0.8rem;
+  color: var(--accent-primary);
+  text-decoration: none;
+  word-break: break-all;
+  transition: opacity 0.2s ease;
+}
+
+.refEmail:hover {
+  text-decoration: underline;
+  opacity: 0.85;
+}
+
 .formWrapper {
   background: var(--bg-card);
   border-radius: 20px;

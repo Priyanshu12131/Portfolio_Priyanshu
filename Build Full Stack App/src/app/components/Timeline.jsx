@@ -5,46 +5,43 @@ import styles from './Timeline.module.css';
 
 const timelineData = [
   {
+    type: 'work',
+    title: 'VHDL / FPGA Design Intern',
+    organization: 'IIEST Shibpur, Kolkata',
+    period: 'May 2025 – Aug 2025',
+    description:
+      'Designed and implemented digital logic modules in VHDL, translating functional specifications into synthesizable RTL for FPGA targets. Practiced simulation and waveform-based verification of digital circuits, gaining exposure to FPGA design flow from RTL to implementation, and contributed to embedded system development.',
+  },
+  {
+    type: 'vlsi',
+    title: 'Cadence Software Hands-on Training',
+    organization: 'Punjab Engineering College (PEC)',
+    period: 'Training',
+    description:
+      'Built proficiency in Cadence for circuit simulation and analysis, including schematic capture and functional verification. Completed NAND and NOR gate circuit analysis projects, strengthening fundamentals in combinational logic design.',
+  },
+  {
     type: 'education',
-    title: 'Secondary Education (10th)',
-    organization: 'School',
-    period: '2019',
-    description: 'Completed 10th standard with a strong foundation in Science and Mathematics.',
+    title: 'B.Tech — Computer & Communication Engineering',
+    organization: 'JK Lakshmipat University, Jaipur',
+    period: '2023 – Expected May 2027',
+    description:
+      'Pursuing B.Tech with focus on digital design fundamentals (combinational & sequential logic, FSMs, timing, CDC), FPGA prototyping on Xilinx Vivado, and full-stack software development.',
+  },
+  {
+    type: 'work',
+    title: 'Full Stack & Embedded Systems Development',
+    organization: 'Self-Learning + Real-World Projects',
+    period: '2025 – Present',
+    description:
+      'Building scalable web applications using the MERN stack (React, Node.js, Express, MongoDB) such as MeetCut and UrbanNest, paired with IoT and microcontroller programming for hardware–software integration.',
   },
   {
     type: 'education',
     title: 'Senior Secondary (12th)',
     organization: 'School',
     period: '2021 – 2023',
-    description: 'Completed 12th with focus on Physics, Chemistry & Mathematics — building the base for engineering.',
-  },
-  {
-    type: 'education',
-    title: 'B.Tech — Computer & Communication Engineering',
-    organization: 'JK Lakshmipati University, Jaipur',
-    period: '2023 – Present (Expected May 2027)',
-    description: 'Pursuing B.Tech with deep focus on VLSI, Digital Design, FPGA Prototyping, Embedded Systems, and Circuit Design. Continuously expanding expertise in hardware and software engineering.',
-  },
-  {
-    type: 'vlsi',
-    title: 'VLSI & FPGA Learning (Ongoing)',
-    organization: 'Self-Learning + Academic',
-    period: '2023 – Present',
-    description: 'Continuously learning VLSI design, Verilog/VHDL, FPGA prototyping using Xilinx Vivado, Cadence, and simulation tools like LT Spice and Schemadraw.',
-  },
-  {
-    type: 'work',
-    title: 'VLSI Internship — Automated Lane Changing System',
-    organization: 'IIEST Shibpur, Kolkata',
-    period: 'May 25, 2025 – Aug 8, 2025',
-    description: 'Worked on an Automated Vehicle Lane Changing System using Xilinx FPGA. Designed FSM-based controllers in Verilog/VHDL and gained hands-on experience in FPGA implementation and digital logic design.',
-  },
-  {
-    type: 'work',
-    title: 'Full Stack Development (Ongoing)',
-    organization: 'Self-Learning + Projects',
-    period: 'Jan 2026 – Present',
-    description: 'Building full-stack web applications using the MERN stack (MongoDB, Express, React, Node.js). Developing real-world projects including an e-commerce platform and restaurant management system.',
+    description: 'Completed 12th with focus on Physics, Chemistry & Mathematics — building the quantitative foundation for engineering.',
   },
 ];
 
